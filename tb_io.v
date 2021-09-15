@@ -41,15 +41,25 @@ module tb_io();
   reg b_dato1;
   reg b_dato2;
   reg b_code;
-  wire [NB_OUT - 1 : 0] r_salida;
+  wire [NB_OUT - 1 : 0] salida;
   reg clk;
   
   input_output#
   (.NB_IN(NB_IN), .NB_OUT(NB_OUT), .NB_CODE(NB_CODE))
   u_input_output
-  (.switch(r_switch), .b_dato1(b_dato1), .b_dato2(b_dato2), .b_code(b_code), .clk(clk), .salida(r_salida));
+  (.switch(r_switch), .b_dato1(b_dato1), .b_dato2(b_dato2), .b_code(b_code), .clk(clk), .salida(salida));
   
   initial begin
+    //r_code = 6'b0;
+    r_switch = 8'b0;
+    r_dato1 = 8'b0;
+    r_dato2 = 8'b0;
+    b_dato1 = 1'b0;
+    b_dato1 = 1'b0;
+    b_code = 1'b0; 
+    clk = 1'b0;
+  
+  
     #40
     r_dato1 = 8'b00010000;//$urandom();
     r_switch = r_dato1;
@@ -119,49 +129,49 @@ module tb_io();
     b_code = 8'b1;
     #20
     b_code = 8'b0;
-
   end
+  
   always #10 clk = ~clk;
   
   always@(posedge clk) begin
-    case(r_switch)
+    case(r_switch)              ///Cambiar despues
       ADD:
-        if(r_salida == r_dato1 + r_dato2)
+        if(salida == r_dato1 + r_dato2)
           $display(" ADD CORRECTO ");
       else 
         $display(" VALOR INCORRECTO ");
       SUB:
-        if(r_salida == r_dato1 - r_dato2)
+        if(salida == r_dato1 - r_dato2)
         $display(" SUB CORRECTO ");
       else 
         $display(" VALOR INCORRECTO ");
        AND:
-       if(r_salida == (r_dato1 & r_dato2))
+       if(salida == (r_dato1 & r_dato2))
         $display(" AND CORRECTO ");
       else 
         $display(" VALOR INCORRECTO ");
         OR:
-        if(r_salida == r_dato1 | r_dato2)
+        if(salida == r_dato1 | r_dato2)
         $display(" OR CORRECTO ");
       else 
         $display(" VALOR INCORRECTO ");
         XOR:
-        if(r_salida == r_dato1 ^ r_dato2)
+        if(salida == r_dato1 ^ r_dato2)
         $display(" XOR CORRECTO ");
       else 
         $display(" VALOR INCORRECTO ");
         SRA:
-         if(r_salida == r_dato1 >>> r_dato2)
+         if(salida == r_dato1 >>> r_dato2)
         $display(" SRA CORRECTO ");
       else 
         $display(" VALOR INCORRECTO ");
         SRL:
-         if(r_salida == r_dato1 >> r_dato2)
+         if(salida == r_dato1 >> r_dato2)
         $display(" SRL CORRECTO ");
       else 
         $display(" VALOR INCORRECTO ");
         NOR:
-         if(r_salida == ~(r_dato1 | r_dato2))
+         if(salida == ~(r_dato1 | r_dato2))
         $display(" NOR CORRECTO ");
       else 
         $display(" VALOR INCORRECTO ");
