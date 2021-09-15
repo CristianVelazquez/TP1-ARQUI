@@ -145,8 +145,9 @@ module tb_io();
   
   always #10 clk = ~clk;
   
-  always@(posedge clk) begin
-    if(~b_code) begin
+  //always@(posedge clk) begin
+  always@(negedge b_code) begin
+    //if(~b_code) begin
         case(r_code)              ///Cambiar despues
           ADD:
             if(salida == r_dato1 + r_dato2)
@@ -189,6 +190,6 @@ module tb_io();
             else 
               $display(" NOR INCORRECTO ");
         endcase
-    end
+    //end
   end
 endmodule
