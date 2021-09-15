@@ -33,7 +33,7 @@ module alu
   input wire [NB_IN - 1 : 0] dato1,
   input wire [NB_IN - 1 : 0] dato2,
   input wire [NB_CODE - 1 : 0] op_code 
-    );
+);
     
     //PARAMETROS LOCALES
   localparam ADD = 6'b100000;
