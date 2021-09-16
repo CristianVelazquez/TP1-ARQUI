@@ -63,8 +63,8 @@ module tb_io();
   
     //Envío de datos a r_dato1 y r_dato2
     #40
-    //r_dato1 = $urandom();
-    r_dato1 = 8'b0000100; //(4)
+    r_dato1 = $urandom();
+    //r_dato1 = 8'b0000100; //(4)
     //r_dato1 = 8'b11111100; //(FC = -4)
     r_switch = r_dato1;
     #20
@@ -72,8 +72,8 @@ module tb_io();
     #20
     b_dato1 = 8'b0;
     #20
-    //r_dato2 = $urandom();
-    r_dato2 = 8'b00000110;//(6)
+    r_dato2 = $urandom();
+    //r_dato2 = 8'b00000110;//(6)
     //r_dato2 = 8'b111111010; //(FA = -6)
     //r_dato2 = 8'b11111111; //(FF = -1)
     //r_dato2 = 8'b00000010; //(2)

@@ -35,12 +35,15 @@ module input_output
     output wire [NB_OUT - 1 : 0] w_salida
  );
   
+  wire  [NB_OUT - 1 : 0] sinc_salida;   //Cable auxiliar para sincronizar la salida
+  
   reg  [NB_IN - 1 : 0]  r_dato1; 
   reg  [NB_IN - 1 : 0]  r_dato2; 
   reg  [NB_CODE - 1 : 0]  r_code; 
-  //reg  [NB_OUT - 1 : 0] r_salida;
+  reg  [NB_OUT - 1 : 0]  r_salida;
   
   
+  assign w_salida = r_salida;   //Asignamos el registro sincronizado al output del módulo
   
   always@(posedge clk) begin
     if(b_dato1 && ~b_dato2 && ~b_code) //solo b_dato1=1
@@ -57,11 +60,16 @@ module input_output
       end
   end
   
+  //Para sincronizar la salida con el clock
+  always@(posedge clk) begin        
+    r_salida <= sinc_salida;     //Actualizo el registro en cada clock
+  end
+  
   
       alu#(
         .NB_IN(NB_IN), .NB_OUT(NB_OUT), .NB_CODE(NB_CODE)
       )
       u_alu
-      (.salida(w_salida), .dato1(r_dato1),.dato2(r_dato2), .op_code(r_code));
+      (.salida(sinc_salida), .dato1(r_dato1),.dato2(r_dato2), .op_code(r_code));
   
 endmodule
