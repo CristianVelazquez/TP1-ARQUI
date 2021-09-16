@@ -33,11 +33,14 @@ module input_output
     input wire b_code,
     input wire clk,
     output wire [NB_OUT - 1 : 0] w_salida
-  );
+ );
   
   reg  [NB_IN - 1 : 0]  r_dato1; 
   reg  [NB_IN - 1 : 0]  r_dato2; 
   reg  [NB_CODE - 1 : 0]  r_code; 
+  //reg  [NB_OUT - 1 : 0] r_salida;
+  
+  
   
   always@(posedge clk) begin
     if(b_dato1 && ~b_dato2 && ~b_code) //solo b_dato1=1
@@ -53,6 +56,8 @@ module input_output
         r_code<=switch;
       end
   end
+  
+  
       alu#(
         .NB_IN(NB_IN), .NB_OUT(NB_OUT), .NB_CODE(NB_CODE)
       )

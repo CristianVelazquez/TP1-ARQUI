@@ -36,14 +36,14 @@ module alu
 );
     
     //PARAMETROS LOCALES
-  localparam ADD = 6'b100000;
-  localparam SUB = 6'b100010;
-  localparam AND = 6'b100100;
-  localparam OR = 6'b100101;
-  localparam XOR = 6'b100110;
-  localparam SRA = 6'b000011;
-  localparam SRL = 6'b000010;
-  localparam NOR = 6'b100111; 
+  localparam ADD = 6'b100000; //(20)
+  localparam SUB = 6'b100010; //(22)
+  localparam AND = 6'b100100; //(24)
+  localparam OR = 6'b100101;  //(25)
+  localparam XOR = 6'b100110; //(26)
+  localparam SRA = 6'b000011; //(03)
+  localparam SRL = 6'b000010; //(02)
+  localparam NOR = 6'b100111; //(27)
     
   reg [NB_OUT - 1 : 0] resultado;
     
