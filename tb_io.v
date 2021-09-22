@@ -151,7 +151,7 @@ module tb_io();
   
   always #10 clk = ~clk;
   
-  //always@(posedge clk) begin
+  //always@(posedge clk) begin ///and posedge clk
   always@(negedge b_code) begin
     //if(~b_code) begin
         case(r_code)              ///Cambiar despues

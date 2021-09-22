@@ -128,6 +128,9 @@ module tb_alu();
         $display(" NOR CORRECTO ");
       else 
         $display(" VALOR INCORRECTO ");
+//      default:
+//        nop;
+      
     endcase
   end
 endmodule
