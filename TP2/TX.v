@@ -22,7 +22,7 @@
 
 module TX
 #( 
-    parameter                  NB_DATA     = 8,       //Numero de bits del dato
+    parameter                  NB_DATA     = 9,       //Numero de bits del dato
     parameter                  SB_TICK     = 16       //Numero de Ticks que dura un bit  
 )
 (
@@ -46,7 +46,7 @@ module TX
     
     reg [2:0]                   state_reg,      state_next;         //
     reg [3:0]                   tickCounter_reg,tickCounter_next;   // Contador de ticks del baudGen
-    reg [2:0]                   bitCounter_reg, bitCounter_next;    // Contador de bits transmitidos
+    reg [3:0]                   bitCounter_reg, bitCounter_next;    // Contador de bits transmitidos
     reg [NB_DATA-1:0]           buffer_reg,     buffer_next;        // Buffer de datos a transmitir
     reg                         tx_reg,         tx_next;            //
     //reg                         o_tx_done_tick_reg, o_tx_done_tick_next;
@@ -59,6 +59,7 @@ module TX
             tickCounter_reg <= 0;  
             bitCounter_reg  <= 0;  
             buffer_reg      <= 0;  
+            tx_reg          <= 1;
         end 
         else begin  
             state_reg       <= state_next;    ///Esto no puede traer problemas de concurrencia?
@@ -97,7 +98,7 @@ always @(*) begin
                 if(i_tick)                              // Entro cada vez que llega un tick del BRGenerator.
                     if(tickCounter_reg == (SB_TICK-1)) begin      // Si es igual a 15 la se?al indica que se calibro.
                         tickCounter_next = 4'b0000;               // Reinicio TickCounter.
-                        bitCounter_next = 3'b000;                // Reinicio el contador de bits transmititdos.
+                        bitCounter_next = 4'b0000;                // Reinicio el contador de bits transmititdos.
                         state_next = DATA;              // Paso al estado DATA para comenzar a enviar bits
                     end
                     else                                // En caso de que TickCounter no haya llegado a '15'      ->
@@ -111,7 +112,7 @@ always @(*) begin
                         tickCounter_next = 4'b0000;               // Reinicio TickCounter.
                         buffer_next = buffer_reg >> 1;            // Desplazo buffer_reg a la derecha y lo asigno a buffer_next.
                         if(bitCounter_reg == (NB_DATA - 1)) begin           // Si es igual a 8 es porque ya envie todos los bits de ->
-                                bitCounter_next = 3'b000;
+                                bitCounter_next = 4'b0000;
                                 state_next = STOP;      // datos, por lo que paso al estado de STOP.
                         end
                         else                            // En caso que no haya llegado, incremento el contador de->
@@ -136,8 +137,8 @@ always @(*) begin
             default : begin                             // DEFAULT: Fault Recovery
                 state_next      = IDLE;                      // Vuelvo al estado IDLE.
                 tickCounter_next= 1'b0;                      // Reinicio TickCounter.
-                bitCounter_next = 1'b0;                      // Reinicio contador de bits recibidos.
-                buffer_next     = 1'b0;                      // Reinicio buffer de datos recibidos.
+                bitCounter_next = 4'b0000;                   // Reinicio contador de bits recibidos.
+                buffer_next     = 0;                         // Reinicio buffer de datos recibidos.
                 tx_next         = 1'b1;                      // Pongo en alto la salida para no enviar bit de START.
             end
                                                     

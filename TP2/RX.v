@@ -22,7 +22,7 @@
 
 module RX
 #( 
-    parameter                  NB_DATA     = 8,       // Numero de bits del dato
+    parameter                  NB_DATA     = 9,       // Numero de bits del dato
     parameter                  SB_TICK     = 16       // Ticks for stop bits  
 )
 (
@@ -38,24 +38,24 @@ module RX
 );
 
     // LOCAL_PARAMETERS
-    localparam                  IDLE        = 4'b0001;
-    localparam                  START       = 4'b0010;
-    localparam                  DATA        = 4'b0100;
-    localparam                  STOP        = 4'b1000;
+    localparam                  IDLE        = 2'b00;
+    localparam                  START       = 2'b01;
+    localparam                  DATA        = 2'b10;
+    localparam                  STOP        = 2'b11;
     
     // INTERNAL
     reg         [3:0]           state_reg   = IDLE;
     reg         [3:0]           state_next  = START;
     reg         [3:0]           tickCounter_reg, tickCounter_next;         // Contador s: TickCounter (del BRGenerator)
-    reg         [2:0]           bitCounter_reg, bitCounter_next;         // Contador n: mantiene la cuenta de los bits recibidos
-    reg         [NB_DATA:0]     buffer_reg, buffer_next;
+    reg         [3:0]           bitCounter_reg, bitCounter_next;         // Contador n: mantiene la cuenta de los bits recibidos
+    reg         [NB_DATA-1:0]   buffer_reg, buffer_next;
 
     // MEMORY
     always @(posedge i_clk, posedge i_reset) begin
         if (i_reset)  begin  
             state_reg       <= IDLE;  
             tickCounter_reg <= 0;  
-            bitCounter_reg  <= 0;  
+            bitCounter_reg  <= 4'b0000;  
             buffer_reg      <= 0;  
         end 
         else begin  
@@ -85,7 +85,7 @@ module RX
                     if(tickCounter_reg == (NB_DATA-1)) begin      // Si es igual a 7, la se?al de entrada esta en el punto ->
                         state_next = DATA;              // medio del bit de START. Paso al sig. estado START.
                         tickCounter_next = 4'b0000;               // Reinicio TickCounter
-                        bitCounter_next = 4'b000;                // Reinicio el contador de bits recibidos
+                        bitCounter_next = 4'b0000;                // Reinicio el contador de bits recibidos
                     end    
                     else                                // En caso de que TickCounter no haya llegado a '7'      ->
                         tickCounter_next = tickCounter_reg + 1;             // lo incremento. (Para que se ubique a la mitad del bit)
@@ -95,8 +95,10 @@ module RX
                     if(tickCounter_reg == (SB_TICK-1)) begin      // Si es igual a 15 la se?al de entrada esta en el punto ->
                         tickCounter_next = 4'b0000;               // medio del primer bit de datos. Reinicio TickCounter y ->
                         buffer_next = {i_rx, buffer_reg[NB_DATA-1 : 1]}; // y almaceno el dato de entrada en un shift-reg. 
-                        if(bitCounter_reg == (NB_DATA-1))        // Si es igual a 7 es porque ya recibi todos los bits de ->
+                        if(bitCounter_reg == (NB_DATA-1)) begin   // Si es igual a 7 es porque ya recibi todos los bits de ->
+                            bitCounter_reg = 4'b0000;
                             state_next = STOP;          // datos, por lo que paso al estado de STOP.
+                        end
                         else                            // En caso que no haya llegado, incremento el contador de->
                             bitCounter_next = bitCounter_reg + 1;         // bits recibidos.
                         end
@@ -114,9 +116,9 @@ module RX
                         
             default : begin                             // DEFAULT: Fault Recovery
                 state_next       = IDLE;                      // Vuelvo al estado IDLE.
-                tickCounter_next =0;                               // Reinicio TickCounter.
-                bitCounter_next  =0;                               // Reinicio contador de bits recibidos.
-                buffer_next      =0;                               // Reinicio buffer de datos recibidos.
+                tickCounter_next = 0;                               // Reinicio TickCounter.
+                bitCounter_next  = 4'b0000;                               // Reinicio contador de bits recibidos.
+                buffer_next      = 0;                               // Reinicio buffer de datos recibidos.
             end                 
         endcase
     end
